@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 //import {ServerComponent} from '../server'
 var serve = require('../server');
-console.log('serve ',serve)
+//console.log('serve ',serve)
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -33,6 +33,15 @@ export class AppComponent {
 
   scrappingBook(){
     serve.bookIndexing(function(success, error){
+      if(success){
+        console.log('cb >>',success)
+      }
+      else console.log('>>',error)
+    })
+  }
+
+  scrappingChaps(){
+    serve.findAllChapters(function(success, error){
       if(success){
         console.log('cb >>',success)
       }

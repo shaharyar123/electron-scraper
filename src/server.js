@@ -53,7 +53,8 @@ const libSchema = {
 };
 
 //console.log('hostname: ' + window.location.hostname);
-const syncURL = 'http://' + window.location.hostname + ':10102/';
+//const syncURL = 'http://' + window.location.hostname + ':10102/';
+const syncURL = '';
 
 var database = '';
 
@@ -80,16 +81,16 @@ RxDB
       remote: syncURL + 'lib/'
     });
     //col.remove()
-      col.find()
-        .$.subscribe(function(heroes) {
-      //  if (!heroes) {
-      //    //heroesList.innerHTML = 'Loading..';
-      //    console.log('loading');
-      //    return;
-      //  }
-        console.log('observable fired')
-        console.dir(heroes);
-      });
+    //  col.find()
+    //    .$.subscribe(function(heroes) {
+    //  //  if (!heroes) {
+    //  //    //heroesList.innerHTML = 'Loading..';
+    //  //    console.log('loading');
+    //  //    return;
+    //  //  }
+    //    console.log('observable fired')
+    //    console.dir(heroes);
+    //  });
   },(err )=> {console.log(err)});
 
 export function addHero() {
@@ -231,6 +232,107 @@ function addBooks(libraries, libIndex, library, page, result, cb){
 ///////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////// scrapping chapters ///////////////////////
+
+export function findAllChapters(cb){
+ database.lib.find({'books.0': {$exists: true}}).exec()
+    .then((libraries) => {
+      console.log('libraries',libraries.length);
+      return getLibrarySingleBook(libraries, 0, cb);
+    })
+    .catch((err) => { console.log('error in finding libs having books ',err) });
+}
+
+function getLibrarySingleBook(libraries, libIndex, cb) {
+  if(libraries.length > libIndex){
+    //res.writefindAllChapters(' listing chapters');
+    let books = libraries[libIndex].books;
+    return getBooksChapter(libraries, libIndex, books, 0, cb);
+  }
+  else {
+    //res.write('-Successfully Completed Chapters Listing');
+    console.log('--ending--');
+    cb('Successfully Completed Chapters Listing', null);
+    //res.end()
+  }
+}
+
+function getBooksChapter(libraries, libIndex, books, bookIndex, cb) {
+  if(books.length > bookIndex){
+    if(books[bookIndex].chapters && books[bookIndex].chapters.length){
+      console.log('-- Already having chapters of lib index', libIndex, 'and book index',  bookIndex, ' calling next -- ');
+      return getBooksChapter(libraries, libIndex, books, bookIndex + 1, cb);
+    }
+    //console.log('//',books[bookIndex])
+    //console.log('>>', typeof  books[bookIndex].isChapters !== 'undefined')
+    if(typeof  books[bookIndex].isChapters !== 'undefined'  &&  !books[bookIndex].isChapters){
+      console.log('-- isChap false for', libIndex, 'and book index',  bookIndex, ' calling next -- ');
+      return getBooksChapter(libraries, libIndex, books, bookIndex + 1, cb);
+    }
+    var serverReq = request(books[bookIndex].link, function(error, response, html){
+      if(!error) {
+        console.log('req for lib index ', libIndex, ' book index ', bookIndex);
+        //res.write(' req for lib index '+ libIndex + ' book index ' +bookIndex );
+        let result = [];
+        let $ = cheerio.load(html);
+        let query = $('tr');
+        if (query.length) {
+          query.each(function (index, element) {
+            let json = {};
+            $(this).find('td').each(function (index, element) {
+              //console.log('index ', index, 'text ', $(this).text());
+              json[index] = $(this).text();
+            });
+            json.link = $(this).find('a').attr('href');
+            json.isDownloaded = false;
+            result.push(json);
+
+          });
+          console.log('result length now ', result.length);
+          let key = `books.${bookIndex}.isChapters`;
+          let chaps = `books.${bookIndex}.chapters`;
+          database.lib.findOne({_id: libraries[libIndex]._id})
+            .update({$set: {[key]: true, [chaps]: result}})
+            .then((resp) => {
+              console.log("chapters save of lib index ", libIndex, ' and book index ', bookIndex);
+              return getBooksChapter(libraries, libIndex, books, bookIndex + 1, cb)
+            })
+            .catch((err) => {
+              console.log('Libraries error is ', err);
+              return getBooksChapter(libraries, libIndex, books, bookIndex, cb);
+            });
+
+        }
+        else {
+          console.log('unable to find query html');
+          let key = `books.${bookIndex}.isChapters`;
+          let chaps = `books.${bookIndex}.chapters`;
+          database.lib.findOne({_id: libraries[libIndex]._id})
+            .update({$set: {[key]: false, [chaps]: []}})
+            .then(() => {
+              console.log("Saved status for no chapter found ");
+              return getBooksChapter(libraries, libIndex, books, bookIndex + 1, cb)
+            })
+            .catch((err) => {
+              console.log('Libraries error is ', err);
+              return getBooksChapter(libraries, libIndex, books, bookIndex, cb);
+            });
+        }
+      }
+      else {
+        console.log('error in server requesting for scarpping ',error);
+        serverReq.abort();
+        return getBooksChapter(libraries, libIndex, books, bookIndex +1, cb);
+      }
+    })
+  }
+  else {
+    console.log('Completed listing of this library ');
+    getLibrarySingleBook(libraries, libIndex + 1, cb);
+  }
+}
+
+
+
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
