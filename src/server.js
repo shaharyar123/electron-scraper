@@ -1,7 +1,16 @@
 import request from 'request';
 import cheerio from 'cheerio';
+//import fs from 'fs';
+//var fs = require('fs');
+//var {remote} = require('electron');
+//var electronFs = remote.require('fs');
+
+import progress from 'request-progress';
 import RxDB from 'rxdb';
 require('babel-polyfill');
+//console.log('fs ',electronFs)
+//console.log('fs fs.createWriteStream ',fs.createWriteStream())
+
 //RxDB.removeDatabase('scraper') // if update schema
 
 RxDB.plugin(require('pouchdb-adapter-websql'));
@@ -81,16 +90,16 @@ RxDB
       remote: syncURL + 'lib/'
     });
     //col.remove()
-    //  col.find()
-    //    .$.subscribe(function(heroes) {
-    //  //  if (!heroes) {
-    //  //    //heroesList.innerHTML = 'Loading..';
-    //  //    console.log('loading');
-    //  //    return;
-    //  //  }
-    //    console.log('observable fired')
-    //    console.dir(heroes);
-    //  });
+      col.find()
+        .$.subscribe(function(heroes) {
+      //  if (!heroes) {
+      //    //heroesList.innerHTML = 'Loading..';
+      //    console.log('loading');
+      //    return;
+      //  }
+        console.log('observable fired')
+        console.dir(heroes);
+      });
   },(err )=> {console.log(err)});
 
 export function addHero() {
@@ -258,10 +267,10 @@ function getLibrarySingleBook(libraries, libIndex, cb) {
 
 function getBooksChapter(libraries, libIndex, books, bookIndex, cb) {
   if(books.length > bookIndex){
-    if(books[bookIndex].chapters && books[bookIndex].chapters.length){
-      console.log('-- Already having chapters of lib index', libIndex, 'and book index',  bookIndex, ' calling next -- ');
-      return getBooksChapter(libraries, libIndex, books, bookIndex + 1, cb);
-    }
+    //if(books[bookIndex].chapters && books[bookIndex].chapters.length){
+    //  console.log('-- Already having chapters of lib index', libIndex, 'and book index',  bookIndex, ' calling next -- ');
+    //  return getBooksChapter(libraries, libIndex, books, bookIndex + 1, cb);
+    //}
     //console.log('//',books[bookIndex])
     //console.log('>>', typeof  books[bookIndex].isChapters !== 'undefined')
     if(typeof  books[bookIndex].isChapters !== 'undefined'  &&  !books[bookIndex].isChapters){
@@ -284,6 +293,7 @@ function getBooksChapter(libraries, libIndex, books, bookIndex, cb) {
             });
             json.link = $(this).find('a').attr('href');
             json.isDownloaded = false;
+            json.filePath = '';
             result.push(json);
 
           });
@@ -330,9 +340,160 @@ function getBooksChapter(libraries, libIndex, books, bookIndex, cb) {
     getLibrarySingleBook(libraries, libIndex + 1, cb);
   }
 }
-
-
-
-
-
 /////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////// Lib Count ///////////////////////////////////////////////////
+export function findCounts(cb){
+  console.log('calling libs')
+  return database.lib.find().exec()
+    .then((res)=>{
+      cb(res, null)
+    },(err)=>{
+        cb(null, err)
+      })
+    .catch((err) => cb(null, err));
+}
+///////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////// download ///////////////////////////////////////
+export function downloadData(cb) {
+  //let key = `books.${0}.chapters.${2}.isDownloaded`;
+  //let key = `books.${bookIndex}.chapters.${chapterIndex}.isDownloaded`;
+  //let pathVal = `output/${libIndex}-${bookIndex}-${chapterIndex}.zip`;
+  //let path = `books.${bookIndex}.chapters.${chapterIndex}.filePath`;
+  //console.log('key ', key);
+
+
+  //database.lib.findOne({_id : '01xjcmhww1:1515678086364'})
+  //  .update({$set: {[key]: false}})
+  //  .then((res)=>{
+  //    console.log('res ',res)
+  //    //cb(res, null)
+  //  },(err)=>{
+  //    console.log('err ',err)
+  //
+  //    //cb(null, err)
+  //  })
+  //  .catch((err) =>console.log('err ',err)
+  //  );
+
+
+  //return Libraries.update({
+  //  'books.chapters': {
+  //    $elemMatch: {
+  //      'link': chapters[chapterIndex].link
+  //    }
+  //  }
+  //}, {
+  //  '$set': {
+  //    [key]: true,
+  //    [path]: pathVal
+  //  }
+  //})
+}
+
+export function findAllChaptersForDownload(cb){
+  database.lib.find({'books.0': {$exists: true}}).exec()
+    .then((libraries) => {
+      console.log('got all libraries, preparing for download')
+      return getLibraryBooksForDownload(libraries, 0, cb);
+    })
+    .catch();
+}
+
+function getLibraryBooksForDownload(libraries, libIndex, cb) {
+  if(libraries.length > libIndex){
+    //res.write(' downloading chapters');
+    let books = libraries[libIndex].books;
+    return getSingleBookForDownload(libraries, libIndex, books, 0, cb);
+  }
+  else {
+    //res.write('-Successfully Completed Chapters Downloading');
+    //res.end()
+    console.log('ended')
+    cb()
+  }
+}
+
+function getSingleBookForDownload(libraries, libIndex, books, bookIndex, cb) {
+  if(books.length > bookIndex){
+    if(books[bookIndex].chapters && books[bookIndex].chapters.length){
+      let chapters = books[bookIndex].chapters;
+      console.log('Chapters length is ', books[bookIndex].chapters.length)
+      return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, 0, cb);
+    }
+    else return getSingleBookForDownload(libraries, libIndex, books, bookIndex + 1, cb);
+  }
+  else {
+    console.log('Completed listing of this library ');
+    getLibraryBooksForDownload(libraries, libIndex + 1, cb);
+    //return res.status(200).json({Message : 'Books Successfully listed'});
+  }
+}
+
+function getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex, cb) {
+  if(chapters.length > chapterIndex){
+    if(chapters[chapterIndex].isDownloaded) {
+      console.log('Already downloaded', chapterIndex)
+      return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex + 1, cb);
+    }
+    else{
+      if(chapters[chapterIndex].link) {
+
+        progress(request(chapters[chapterIndex].link))
+          .on('progress', function (state) {
+            console.log('progress', state.percent *100, '%', 'libindex ', libIndex, 'bookIndex ', bookIndex, 'chapterIndex ', chapterIndex);
+          })
+          .on('response', function (response) {
+            if (response && response.statusCode === 200) {
+              response.on('data', function (data) {
+                  //console.log('data.length')
+                })
+                .on('end', function () {
+                  console.log("This is the end...");
+
+                  let key = `books.${bookIndex}.chapters.${chapterIndex}.isDownloaded`;
+                  let pathVal = `output/${libIndex}-${bookIndex}-${chapterIndex}.zip`;
+                  let path = `books.${bookIndex}.chapters.${chapterIndex}.filePath`;
+                  console.log('key ',key);
+
+                  database.lib.findOne({_id : libraries[libIndex]._id})
+                    .update({$set:   {[path]: pathVal, [key]: true}})
+                    .then((success) => {
+                      console.log('success download true-  ', success);
+                      //return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex + 1, res)
+                    })
+                    .catch((err) => {
+                      console.log("error in lib saving after download", err)
+                      return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex + 1, cb)
+                    });
+
+                  //return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex + 1, res);
+                })
+                .pipe(fs.createWriteStream('./output/' + libIndex +'-'+ bookIndex +'-'+ chapterIndex +'.zip'))
+            }
+            else {
+              console.log('file not found on url link  ', response.statusCode)
+              return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex + 1, res)
+            }
+          })
+          .on('error', function (err) {
+            console.log('error in request ', err);
+            return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex + 1, res)
+          });
+      }
+      else {
+        console.log('calling next chap, no link')
+        return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex + 1, cb)
+      }
+
+    }
+
+
+  }
+  else {
+    console.log('Completed listing of this library ');
+    getSingleBookForDownload(libraries, libIndex, books, bookIndex + 1, cb);
+    //return res.status(200).json({Message : 'Books Successfully listed'});
+  }
+}

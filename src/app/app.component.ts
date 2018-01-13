@@ -9,7 +9,7 @@ var serve = require('../server');
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-
+  libs : number;
   constructor(private _electronService: ElectronService) {}   // DI
 
   launchWindow() {
@@ -31,6 +31,15 @@ export class AppComponent {
     })
   }
 
+  scrappingChaps(){
+    serve.findAllChapters(function(success, error){
+      if(success){
+        console.log('cb >>',success)
+      }
+      else console.log('>>',error)
+    })
+  }
+
   scrappingBook(){
     serve.bookIndexing(function(success, error){
       if(success){
@@ -40,12 +49,33 @@ export class AppComponent {
     })
   }
 
-  scrappingChaps(){
-    serve.findAllChapters(function(success, error){
+  download(){
+    serve.findAllChaptersForDownload()
+  }
+
+  count(){
+    this.libs = 0;
+    var  books= 0, chaps= 0;
+    serve.findCounts((success, error) => {
       if(success){
-        console.log('cb >>',success)
+        console.log('cb : got the data now filtering..');
+        success.forEach((lib) => {
+          (lib.books) && (lib.books.length) && (books += lib.books.length);
+          if(lib.books && lib.books.length){
+            lib.books.forEach((book) => {
+              (book.chapters) && (book.chapters.length) && (chaps += book.chapters.length)
+            })
+          }
+        });
+
+        this.libs = success.length;
+        console.log(this)
+
+        console.log('libs >>',this.libs)
+        console.log('books >>',books)
+        console.log('chaps >>',chaps)
       }
-      else console.log('>>',error)
+      else console.log('cb >>',error)
     })
   }
 
