@@ -28,6 +28,7 @@
     "babel-runtime": "6.23.0",
     "cheerio": "^1.0.0-rc.2",
     "core-js": "^2.4.1",
+    "electron-debug": "^1.5.0",
     "fs": "0.0.1-security",
     "memdown": "^1.4.1",
     "ngx-electron": "^1.0.4",
@@ -49,6 +50,7 @@
     "@types/node": "~6.0.60",
     "codelyzer": "^4.0.1",
     "electron": "^1.7.10",
+    "electron-packager": "^10.1.1",
     "jasmine-core": "~2.6.2",
     "jasmine-spec-reporter": "~4.1.0",
     "karma": "~1.7.0",
@@ -57,13 +59,13 @@
     "karma-coverage-istanbul-reporter": "^1.2.1",
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
-    "protractor": "~5.1.2",
-    "ts-node": "~3.2.0",
-    "tslint": "~5.7.0",
-    "typescript": "~2.4.2",
     "pouchdb-adapter-http": "6.3.4",
     "pouchdb-adapter-websql": "6.3.4",
     "pouchdb-replication": "6.3.4",
-    "pouchdb-server": "2.3.7"
+    "pouchdb-server": "2.3.7",
+    "protractor": "~5.1.2",
+    "ts-node": "~3.2.0",
+    "tslint": "~5.7.0",
+    "typescript": "~2.4.2"
   }
 }

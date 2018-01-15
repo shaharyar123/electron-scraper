@@ -1,4 +1,6 @@
 const {app, BrowserWindow} = require('electron')
+require('electron-debug')({showDevTools: true, enabled: true});
+
 const path = require('path')
 const url = require('url')
 

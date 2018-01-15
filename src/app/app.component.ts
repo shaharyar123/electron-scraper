@@ -14,12 +14,12 @@ export class AppComponent {
 
   launchWindow() {
     console.log('//this._electronService.shell ',this._electronService.shell);
-    this._electronService.shell.openItem('E:/test/hello.zip');
+    this._electronService.shell.openItem('\output\0-0-1.zip');
   }
 
   launchWindow2() {
     console.log('//this._electronService.shell ',this._electronService.shell);
-    this._electronService.shell.showItemInFolder('E:/test/hello.zip');
+    this._electronService.shell.showItemInFolder('\output\0-0-1.zip');
   }
 
   scrappingLib(){
@@ -50,7 +50,12 @@ export class AppComponent {
   }
 
   download(){
-    serve.findAllChaptersForDownload()
+    serve.findAllChaptersForDownload(function(success, error){
+      if(success){
+        console.log('cb downloaded >>',success)
+      }
+      else console.log(' downloaded >>',error)
+    })
   }
 
   count(){
