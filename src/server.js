@@ -406,6 +406,8 @@ function getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters,
           })
           .on('response', function (response) {
             if (response && response.statusCode === 200) {
+              let pathVal = `\\output\\${libIndex}-${bookIndex}-${chapterIndex}.zip`;
+              console.log('>>>>>',pathVal)
               response.on('data', function (data) {
                   //console.log('data.length')
                 })
@@ -414,6 +416,7 @@ function getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters,
 
                   let key = `books.${bookIndex}.chapters.${chapterIndex}.isDownloaded`;
                   let pathVal = `\\output\\${libIndex}-${bookIndex}-${chapterIndex}.zip`;
+                  console.log(pathVal)
                   let path = `books.${bookIndex}.chapters.${chapterIndex}.filePath`;
                   console.log('key ',key);
 

@@ -25,3 +25,18 @@
   color: #666666;
   display: block;
 }
+.search{
+  float: right;
+}
+.list-container {
+  margin-top: 22px;
+  .list-section {
+    background: #ffffff;
+    border: 1px solid #666666;;
+    h1 {
+      font-size: 30px;
+      font-weight: bold;
+      padding-left: 25px;
+    }
+  }
+}

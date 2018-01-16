@@ -1,41 +1,128 @@
 <!--<div style="text-align:center">-->
-  <!--<h1>-->
-    <!--Welcome to Scraper!-->
-  <!--</h1>-->
-  <!--<button (click)="launchWindow()">Open File</button>-->
-  <!--<button (click)="launchWindow2()">Launch a Window</button>-->
-  <!--<button (click)="scrappingLib()">Scrapping Lib</button>-->
-  <!--<button (click)="scrappingBook()">Scrapping Books</button>-->
-  <!--<button (click)="scrappingChaps()">Scrapping Chaps</button>-->
-  <!--<button (click)="count()">Counts</button>-->
-  <!--<button (click)="download()">Download</button>-->
+<!--<h1>-->
+<!--Welcome to Scraper!-->
+<!--</h1>-->
+<!--<button (click)="launchWindow()">Open File</button>-->
+<!--<button (click)="launchWindow2()">Launch a Window</button>-->
+<!--<button (click)="scrappingLib()">Scrapping Lib</button>-->
+<!--<button (click)="scrappingBook()">Scrapping Books</button>-->
+<!--<button (click)="scrappingChaps()">Scrapping Chaps</button>-->
+<!--<button (click)="count()">Counts</button>-->
+<!--<button (click)="download()">Download</button>-->
 
 <!--</div>-->
 <div class="container-fluid">
-    <div class="header">
-      <div class="col-md-4">
-        <div class="button-section">
-          <h1>Libraries : <span [textContent]="libCount"></span></h1>
-          <button class="button">Start Scrapping</button>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="button-section">
-          <h1>Books : <span [textContent]="booksCount"></span></h1>
-          <button class="button">Start Scrapping</button>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="button-section">
-          <h1>Chapters : <span [textContent]="chapsCount"></span></h1>
-          <button class="button">Start Scrapping</button>
-        </div>
+  <div class="header">
+    <div class="col-md-4">
+      <div class="button-section">
+        <h1>Libraries : <span [textContent]="libCount"></span></h1>
+        <button class="button" (click)="scrappingLib()">Start Scrapping</button>
       </div>
     </div>
-    <div class="col-md-12 text-center">
-      <button class="button" disabled="disabled">Start Download</button>
+    <div class="col-md-4">
+      <div class="button-section">
+        <h1>Books : <span [textContent]="booksCount"></span></h1>
+        <button class="button" (click)="scrappingBook()">Start Scrapping</button>
+      </div>
     </div>
+    <div class="col-md-4">
+      <div class="button-section">
+        <h1>Chapters : <span [textContent]="chapsCount"></span></h1>
+        <button class="button" (click)="scrappingChaps()">Start Scrapping</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12 text-center">
+    <button class="button" [disabled]="false">Start Download</button>
+    <input type="text" placeholder="Search" class="search">
+  </div>
   <div class="col-md-12 text-center">
     <span class="DownloadingText">Downloading...</span>
+  </div>
+
+  <div class="col-md-12 list-container">
+    <div class="col-md-4">
+      <div class="row">
+        <div class="list-section">
+        <h1>Libraries</h1>
+        <hr>
+        <ol>
+          <li>
+            Name of library <br>
+            Link : asd2315asd21 <br>
+            View box : asd1a3s2d
+            <hr>
+          </li>
+          <li>
+            Name of library <br>
+            Link : asd2315asd21 <br>
+            View box : asd1a3s2d
+            <hr>
+          </li>
+          <li>
+            Name of library <br>
+            Link : asd2315asd21 <br>
+            View box : asd1a3s2d
+          </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="row">
+        <div class="list-section">
+        <h1>Books</h1>
+        <hr>
+        <ol>
+          <li>
+            Name of Books <br>
+            Link : asd2315asd21 <br>
+            View box : asd1a3s2d
+            <hr>
+          </li>
+          <li>
+            Name of Books <br>
+            Link : asd2315asd21 <br>
+            View box : asd1a3s2d
+            <hr>
+          </li>
+          <li>
+            Name of Books <br>
+            Link : asd2315asd21 <br>
+            View box : asd1a3s2d
+          </li>
+        </ol>
+      </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="row">
+        <div class="list-section">
+        <h1>Chaps</h1>
+        <hr>
+        <ol>
+          <li>
+            chapters [1786] <br>
+            Link : asd2315asd21 <br>
+            View box : asd1a3s2d
+            <hr>
+          </li>
+          <li>
+            chapters [1786] <br>
+            Link : asd2315asd21 <br>
+            View box : asd1a3s2d
+            <hr>
+          </li>
+          <li>
+            chapters [1786] <br>
+            Link : asd2315asd21 <br>
+            View box : asd1a3s2d
+          </li>
+        </ol>
+      </div>
+        </div>
+    </div>
   </div>
 </div>

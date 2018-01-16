@@ -24,7 +24,7 @@ export class AppComponent {
     //this.count()
     serve.createDb((res, err) => {
       res && console.log(res)
-      res && this.count()
+      //res && this.count()
       err && console.log(err)
     })
   }   // DI
