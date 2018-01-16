@@ -1,13 +1,41 @@
-<div style="text-align:center">
-  <h1>
-    Welcome to Scraper!
-  </h1>
+<!--<div style="text-align:center">-->
+  <!--<h1>-->
+    <!--Welcome to Scraper!-->
+  <!--</h1>-->
   <!--<button (click)="launchWindow()">Open File</button>-->
   <!--<button (click)="launchWindow2()">Launch a Window</button>-->
-  <button (click)="scrappingLib()">Scrapping Lib</button>
-  <button (click)="scrappingBook()">Scrapping Books</button>
-  <button (click)="scrappingChaps()">Scrapping Chaps</button>
-  <button (click)="count()">Counts</button>
-  <button (click)="download()">Download</button>
+  <!--<button (click)="scrappingLib()">Scrapping Lib</button>-->
+  <!--<button (click)="scrappingBook()">Scrapping Books</button>-->
+  <!--<button (click)="scrappingChaps()">Scrapping Chaps</button>-->
+  <!--<button (click)="count()">Counts</button>-->
+  <!--<button (click)="download()">Download</button>-->
 
+<!--</div>-->
+<div class="container-fluid">
+    <div class="header">
+      <div class="col-md-4">
+        <div class="button-section">
+          <h1>Libraries : <span [textContent]="libCount"></span></h1>
+          <button class="button">Start Scrapping</button>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="button-section">
+          <h1>Books : <span [textContent]="booksCount"></span></h1>
+          <button class="button">Start Scrapping</button>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="button-section">
+          <h1>Chapters : <span [textContent]="chapsCount"></span></h1>
+          <button class="button">Start Scrapping</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12 text-center">
+      <button class="button" disabled="disabled">Start Download</button>
+    </div>
+  <div class="col-md-12 text-center">
+    <span class="DownloadingText">Downloading...</span>
+  </div>
 </div>

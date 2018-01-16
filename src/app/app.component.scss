@@ -1,0 +1,27 @@
+.header{
+  margin: 50px 0;
+  display: flex;
+  .button-section{
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding:  30px;
+    box-shadow: 0 2px 5px -1px rgba(0, 0, 0, 0.5411764705882353);
+    h1{
+      font-size: 30px;
+      color: #292929;
+      margin: 0;
+    }
+    button{
+      margin-top: 20px;
+    }
+  }
+}
+.DownloadingText{
+  font-size: 14px;
+  margin: 20px 10px;
+  color: #666666;
+  display: block;
+}

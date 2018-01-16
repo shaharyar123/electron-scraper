@@ -3,7 +3,8 @@ import cheerio from 'cheerio';
 
 const {remote} = window.require('electron')
 var fs = remote.require('fs');
-//console.log()
+//console.log('path  is : ',remote.app.getAppPath())
+//console.log('fs............. ',fs)
 import progress from 'request-progress';
 import RxDB from 'rxdb';
 require('babel-polyfill');
@@ -64,57 +65,49 @@ const syncURL = '';
 
 var database = '';
 
-
-RxDB
-  .create({
-    name: 'scraper',
-    adapter: 'websql',
-    //password: 'myLongAndStupidPassword',   //optional
-    ignoreDuplicate: true
-  })
-  .then(function(db) {
-    console.log('creating lib-collection..', db);
-    database = db;
-    return db.collection({
-      name: 'lib',
-      schema: libSchema
-    });
-  })
-  .then(function(col) {
-    // sync
-    console.log('starting sync');
-    database.lib.sync({
-      remote: syncURL + 'lib/'
-    });
-    //col.remove()
-      col.find()
-        .$.subscribe(function(heroes) {
-      //  if (!heroes) {
-      //    //heroesList.innerHTML = 'Loading..';
-      //    console.log('loading');
-      //    return;
-      //  }
-        console.log('observable fired')
-        console.dir(heroes);
+export function createDb(cb){
+  RxDB
+    .create({
+      name: 'scraper',
+      adapter: 'websql',
+      //password: 'myLongAndStupidPassword',   //optional
+      ignoreDuplicate: true
+    })
+    .then(function(db) {
+      console.log('creating lib-collection..', db);
+      database = db;
+      return db.collection({
+        name: 'lib',
+        schema: libSchema
       });
-  },(err )=> {console.log(err)});
-
-export function addHero() {
-  const obj = {
-    "title" : "وزارة الأوقاف الكويتية",
-    "link" : "http://wqf.me/?cat=16",
-    "isBook" : true,
-    "books" : [
-      { "title" : "aaaaa",  "link" : "http://wqf.me/?cat=16"},
-      { "title" : "asasasas",  "link" : "http://wqf.me/?cat=16", "chapters": [{"1":"one"},{"2":"two"}]}]
-  }
-  console.log('inserting lib:');
-  //console.dir(obj);
-  database.lib.insert(obj).then(
-    (res)=>{console.log('added')},
-    (err)=>{console.log(err)}
-  );
+    })
+    .then(function(col) {
+      // sync
+      console.log('starting sync');
+      database.lib.sync({
+        remote: syncURL + 'lib/'
+      });
+      //col.remove()
+        col.find()
+          .$.subscribe(function(heroes) {
+        //  if (!heroes) {
+        //    //heroesList.innerHTML = 'Loading..';
+        //    console.log('loading');
+        //    return;
+        //  }
+          console.log('observable fired')
+          console.dir(heroes);
+        });
+      //console.log('ready now')
+      cb('db ready now', null)
+    },(err )=> {
+      console.log(err)
+      cb(null, err)
+    });
 }
+
+
+
 
 ////////////////////////////////////////////// scrapping lib ////////////////////////
 export function libIndexing(cb) {
@@ -353,41 +346,6 @@ export function findCounts(cb){
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////// download ///////////////////////////////////////
-export function downloadData(cb) {
-  //let key = `books.${0}.chapters.${2}.isDownloaded`;
-  //let key = `books.${bookIndex}.chapters.${chapterIndex}.isDownloaded`;
-  //let pathVal = `output/${libIndex}-${bookIndex}-${chapterIndex}.zip`;
-  //let path = `books.${bookIndex}.chapters.${chapterIndex}.filePath`;
-  //console.log('key ', key);
-
-
-  //database.lib.findOne({_id : '01xjcmhww1:1515678086364'})
-  //  .update({$set: {[key]: false}})
-  //  .then((res)=>{
-  //    console.log('res ',res)
-  //    //cb(res, null)
-  //  },(err)=>{
-  //    console.log('err ',err)
-  //
-  //    //cb(null, err)
-  //  })
-  //  .catch((err) =>console.log('err ',err)
-  //  );
-
-
-  //return Libraries.update({
-  //  'books.chapters': {
-  //    $elemMatch: {
-  //      'link': chapters[chapterIndex].link
-  //    }
-  //  }
-  //}, {
-  //  '$set': {
-  //    [key]: true,
-  //    [path]: pathVal
-  //  }
-  //})
-}
 
 export function findAllChaptersForDownload(cb){
   database.lib.find({'books.0': {$exists: true}}).exec()
@@ -455,7 +413,7 @@ function getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters,
                   console.log("This is the end...");
 
                   let key = `books.${bookIndex}.chapters.${chapterIndex}.isDownloaded`;
-                  let pathVal = `output/${libIndex}-${bookIndex}-${chapterIndex}.zip`;
+                  let pathVal = `\\output\\${libIndex}-${bookIndex}-${chapterIndex}.zip`;
                   let path = `books.${bookIndex}.chapters.${chapterIndex}.filePath`;
                   console.log('key ',key);
 
@@ -473,6 +431,7 @@ function getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters,
                   //return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex + 1, res);
                 })
                 .pipe(fs.createWriteStream('./output/' + libIndex +'-'+ bookIndex +'-'+ chapterIndex +'.zip'))
+                //.pipe(fs.createWriteStream('./resources/app/output/' + libIndex +'-'+ bookIndex +'-'+ chapterIndex +'.zip')) // for production exe file
             }
             else {
               console.log('file not found on url link  ', response.statusCode, 'libindex ', libIndex, 'bookIndex ', bookIndex, 'chapterIndex ', chapterIndex)

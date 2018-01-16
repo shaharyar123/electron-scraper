@@ -1,25 +1,46 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
+//import {remote}  from 'window.electron';
+//interface Window {
+//  require: any;
+//}
+//declare var window: Window;
+//const {remote} = window.require('electron')
+
+//console.log('path  is : ',remote.app.getAppPath())
 //import {ServerComponent} from '../server'
 var serve = require('../server');
 //console.log('serve ',serve)
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  libs : number;
-  constructor(private _electronService: ElectronService) {}   // DI
+  libCount : number = 0;
+  booksCount : number = 0;
+  chapsCount : number = 0;
+  constructor(private _electronService: ElectronService, private cdRef: ChangeDetectorRef) {
+    //this.count()
+    serve.createDb((res, err) => {
+      res && console.log(res)
+      res && this.count()
+      err && console.log(err)
+    })
+  }   // DI
 
   launchWindow() {
     console.log('//this._electronService.shell ',this._electronService.shell);
-    this._electronService.shell.openItem('\output\0-0-1.zip');
+    let path = "\\output\\0-0-2.zip";
+    console.log(path)
+    //this._electronService.shell.openItem(remote.app.getAppPath()+ path);
   }
 
   launchWindow2() {
     console.log('//this._electronService.shell ',this._electronService.shell);
-    this._electronService.shell.showItemInFolder('\output\0-0-1.zip');
+    let path = "\\output\\0-0-2.zip";
+    console.log(path)
+    //this._electronService.shell.showItemInFolder(remote.app.getAppPath()+ path);
   }
 
   scrappingLib(){
@@ -59,8 +80,7 @@ export class AppComponent {
   }
 
   count(){
-    this.libs = 0;
-    var  books= 0, chaps= 0;
+    let  books= 0, chaps= 0;
     serve.findCounts((success, error) => {
       if(success){
         console.log('cb : got the data now filtering..');
@@ -73,10 +93,11 @@ export class AppComponent {
           }
         });
 
-        this.libs = success.length;
-        console.log(this)
-
-        console.log('libs >>',this.libs)
+        this.libCount = success.length;
+        this.booksCount = books;
+        this.chapsCount = chaps;
+        this.cdRef.detectChanges();
+        console.log('libs >>',this.libCount)
         console.log('books >>',books)
         console.log('chaps >>',chaps)
       }

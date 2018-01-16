@@ -1,0 +1,30 @@
+/* You can add global styles to this file, and also import other style files */
+@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+*{
+  outline: none !important;
+}
+body{
+  background: #f8f8f8;
+}
+.button{
+  font-size: 16px;
+  color: #fff;
+  background: #0d7133;
+  border: 1px solid #0d7133;
+  border-radius: 10px;
+  transition: 0.5s;
+  padding: 10px 20px ;
+  box-shadow: 0 8px 15px -8px rgba(128, 128, 128, 0.90);
+  &:hover{
+    color: #0d7133;
+    background: #fff;
+    transition: 0.5s;
+  }
+  &:disabled {
+    background: #a7a7a7;
+    cursor: not-allowed;
+    border: 1px solid #a7a7a7;
+    color: #fff !important;
+    box-shadow: none;
+  }
+}
