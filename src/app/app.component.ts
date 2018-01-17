@@ -1,5 +1,7 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
+import { PipeTransform, Pipe } from '@angular/core';
+
 //import {remote}  from 'window.electron';
 //interface Window {
 //  require: any;
@@ -17,15 +19,33 @@ var serve = require('../server');
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  loading: boolean = true;
+  downloadBtn: boolean = true;
+  libDataSection: boolean = true;
+  bookDataSection: boolean = false;
+  chapDataSection: boolean = false;
+  libScrapBtn : boolean = true;
+  libScrapTxt : boolean = false;
+  bookScrapBtn : boolean = false;
+  bookScrapTxt : boolean = false;
+  chapScrapBtn : boolean = false;
+  chapScrapTxt : boolean = false;
+  libraries: {};
+  books: {};
+  chaps: {};
   libCount : number = 0;
   booksCount : number = 0;
   chapsCount : number = 0;
   constructor(private _electronService: ElectronService, private cdRef: ChangeDetectorRef) {
-    //this.count()
     serve.createDb((res, err) => {
-      res && console.log(res)
-      //res && this.count()
-      err && console.log(err)
+      if(res){
+        console.log('db ready now')
+        res && console.log(res);
+        //this.libraries = res;
+        this.count();
+
+      }
+      else console.log(err)
     })
   }   // DI
 
@@ -44,46 +64,79 @@ export class AppComponent {
   }
 
   scrappingLib(){
-    serve.libIndexing(function(success, error){
+    this.libScrapBtn = false;
+    this.libScrapTxt = true;
+    serve.libIndexing((success, error) => {
       if(success){
-        console.log('>>',success)
+        console.log('>>',success);
+        this.count();
+        this.libScrapTxt = false;
+        this.bookScrapBtn = true;
+        this.cdRef.detectChanges();
       }
-      else console.log('>>',error)
+      else {
+        console.log('>>', error)
+        this.libScrapTxt = false;
+      }
     })
   }
 
   scrappingChaps(){
-    serve.findAllChapters(function(success, error){
+    this.chapScrapBtn = false;
+    this.chapScrapTxt = true;
+    serve.findAllChapters((success, error) => {
       if(success){
         console.log('cb >>',success)
+        this.count();
+        this.chapScrapTxt = false;
+        this.cdRef.detectChanges();
       }
-      else console.log('>>',error)
+      else {
+        console.log('>>',error)
+        this.chapScrapTxt = false;
+      }
     })
   }
 
   scrappingBook(){
-    serve.bookIndexing(function(success, error){
+    this.bookScrapBtn = false;
+    this.bookScrapTxt = true;
+    serve.bookIndexing((success, error) => {
       if(success){
         console.log('cb >>',success)
+        this.count();
+        this.chapScrapBtn = true;
+        this.bookScrapTxt = false;
+        this.cdRef.detectChanges();
       }
-      else console.log('>>',error)
+      else {
+        console.log('>>',error)
+        this.bookScrapTxt = false;
+      }
+
     })
   }
 
   download(){
-    serve.findAllChaptersForDownload(function(success, error){
+    this.downloadBtn = false;
+    serve.findAllChaptersForDownload((success, error) => {
       if(success){
+        this.downloadBtn = true
         console.log('cb downloaded >>',success)
       }
-      else console.log(' downloaded >>',error)
+      else {
+        console.log(' downloaded >>',error)
+        this.downloadBtn = true
+      }
     })
   }
 
   count(){
     let  books= 0, chaps= 0;
-    serve.findCounts((success, error) => {
+    serve.findLibs((success, error) => {
       if(success){
-        console.log('cb : got the data now filtering..');
+        this.libraries = success;
+        console.log('cb : got the data now filtering..', success);
         success.forEach((lib) => {
           (lib.books) && (lib.books.length) && (books += lib.books.length);
           if(lib.books && lib.books.length){
@@ -96,6 +149,7 @@ export class AppComponent {
         this.libCount = success.length;
         this.booksCount = books;
         this.chapsCount = chaps;
+        this.loading = false;
         this.cdRef.detectChanges();
         console.log('libs >>',this.libCount)
         console.log('books >>',books)
@@ -105,4 +159,30 @@ export class AppComponent {
     })
   }
 
+  getBooksOfLib(item){
+    console.log('item ', item.books.length);
+    this.chapDataSection = false;
+    this.books = item.books;
+    this.bookDataSection = true;
+    this.cdRef.detectChanges();
+  }
+
+  getChaptersOfBook(item){
+    console.log('item ', item.chapters.length);
+    this.chaps = item.chapters;
+    this.chapDataSection = true;
+    this.cdRef.detectChanges();
+  }
+
+}
+
+@Pipe({name: 'keys'})
+export class KeysPipe implements PipeTransform {
+  transform(value, args:string[]) : any {
+    let keys = [];
+    for (let key in value) {
+      keys.push(key);
+    }
+    return keys;
+  }
 }

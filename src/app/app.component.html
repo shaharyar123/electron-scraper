@@ -12,117 +12,84 @@
 
 <!--</div>-->
 <div class="container-fluid">
+  <div *ngIf="loading" class="loading">
+    Looking for data...
+<img src="assets/loading.png">
+  </div>
   <div class="header">
-    <div class="col-md-4">
+    <div class="col-md-4 col-sm-4">
       <div class="button-section">
         <h1>Libraries : <span [textContent]="libCount"></span></h1>
-        <button class="button" (click)="scrappingLib()">Start Scrapping</button>
+        <button class="button" (click)="scrappingLib()" [disabled]="!libScrapBtn" *ngIf="!libScrapTxt">Start Scrapping</button>
+        <span class="DownloadingText" *ngIf="libScrapTxt">Scrapping...</span>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4 col-sm-4">
       <div class="button-section">
         <h1>Books : <span [textContent]="booksCount"></span></h1>
-        <button class="button" (click)="scrappingBook()">Start Scrapping</button>
+        <button class="button" (click)="scrappingBook()" [disabled]="!bookScrapBtn" *ngIf="!bookScrapTxt">Start Scrapping</button>
+        <span class="DownloadingText" *ngIf="bookScrapTxt">Scrapping...</span>
+
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4 col-sm-4">
       <div class="button-section">
         <h1>Chapters : <span [textContent]="chapsCount"></span></h1>
-        <button class="button" (click)="scrappingChaps()">Start Scrapping</button>
+        <button class="button" (click)="scrappingChaps()" [disabled]="!chapScrapBtn" *ngIf="!chapScrapTxt">Start Scrapping</button>
+        <span class="DownloadingText" *ngIf="chapScrapTxt">Scrapping...</span>
+
       </div>
     </div>
   </div>
   <div class="col-md-12 text-center">
-    <button class="button" [disabled]="false">Start Download</button>
+    <button class="button" [disabled]="!downloadBtn" (click)="download()">Start Download</button>
     <input type="text" placeholder="Search" class="search">
   </div>
-  <div class="col-md-12 text-center">
+  <div class="col-md-12 text-center" [hidden]="downloadBtn">
     <span class="DownloadingText">Downloading...</span>
   </div>
 
-  <div class="col-md-12 list-container">
-    <div class="col-md-4">
-      <div class="row">
-        <div class="list-section">
+  <div class="col-md-12 ">
+    <div class="list-container">
+      <div class="list-section"  *ngIf="libDataSection">
         <h1>Libraries</h1>
-        <hr>
-        <ol>
-          <li>
-            Name of library <br>
-            Link : asd2315asd21 <br>
-            View box : asd1a3s2d
-            <hr>
+        <ul class="inner-list-section">
+          <li *ngFor="let lib of libraries let i = index">
+           <ul>
+              <li class="heading" (click)="getBooksOfLib(lib)">{{i + 1}}. {{lib.title}} </li>
+              <li> <span>Link :</span> <a href="{{lib.link}}" target="_blank"> {{lib.link}} </a></li>
+              <li *ngIf="lib.books"> <span>Books Count :</span> {{lib.books.length}}</li>
+           </ul>
           </li>
-          <li>
-            Name of library <br>
-            Link : asd2315asd21 <br>
-            View box : asd1a3s2d
-            <hr>
-          </li>
-          <li>
-            Name of library <br>
-            Link : asd2315asd21 <br>
-            View box : asd1a3s2d
-          </li>
-          </ol>
-        </div>
-      </div>
-    </div>
 
-    <div class="col-md-4">
-      <div class="row">
-        <div class="list-section">
+      </ul>
+      </div>
+
+      <div class="list-section"  *ngIf="bookDataSection">
         <h1>Books</h1>
-        <hr>
-        <ol>
-          <li>
-            Name of Books <br>
-            Link : asd2315asd21 <br>
-            View box : asd1a3s2d
-            <hr>
+        <ul class="inner-list-section">
+          <li *ngFor="let book of books let i = index">
+            <ul>
+              <li class="heading" (click)="getChaptersOfBook(book)">{{i + 1}}. {{book.title}}</li>
+              <li> <span>Link :</span>  <a href="{{book.link}}" target="_blank"> {{book.link}} </a></li>
+              <li *ngIf="book.chapters"> <span>Chapters Count :</span> {{book.chapters.length}}</li>
+            </ul>
           </li>
-          <li>
-            Name of Books <br>
-            Link : asd2315asd21 <br>
-            View box : asd1a3s2d
-            <hr>
-          </li>
-          <li>
-            Name of Books <br>
-            Link : asd2315asd21 <br>
-            View box : asd1a3s2d
-          </li>
-        </ol>
+        </ul>
       </div>
-        </div>
-    </div>
 
-    <div class="col-md-4">
-      <div class="row">
-        <div class="list-section">
-        <h1>Chaps</h1>
-        <hr>
-        <ol>
-          <li>
-            chapters [1786] <br>
-            Link : asd2315asd21 <br>
-            View box : asd1a3s2d
-            <hr>
-          </li>
-          <li>
-            chapters [1786] <br>
-            Link : asd2315asd21 <br>
-            View box : asd1a3s2d
-            <hr>
-          </li>
-          <li>
-            chapters [1786] <br>
-            Link : asd2315asd21 <br>
-            View box : asd1a3s2d
-          </li>
-        </ol>
-      </div>
-        </div>
+      <div class="list-section"  *ngIf="chapDataSection">
+            <h1>Chapters</h1>
+            <ul class="inner-list-section" id="style-4">
+              <li *ngFor="let chap of chaps; let i = index">
+                <ul>
+                  <li># {{i + 1}}.</li>
+                    <li *ngFor="let key of chap | keys">{{chap[key]}}</li>
+                </ul>
+              </li>
+
+            </ul>
+          </div>
     </div>
   </div>
 </div>

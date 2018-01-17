@@ -3,12 +3,12 @@ import { NgModule } from '@angular/core';
 import { NgxElectronModule } from 'ngx-electron';
 
 
-import { AppComponent } from './app.component';
-
+import { AppComponent, KeysPipe } from './app.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    KeysPipe
   ],
   imports: [
     BrowserModule,
