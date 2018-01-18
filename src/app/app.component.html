@@ -11,10 +11,9 @@
 <!--<button (click)="download()">Download</button>-->
 
 <!--</div>-->
-<div class="container-fluid">
+<div class="container-fluid" [ngClass]="loading ? 'overflow' : ''">
   <div *ngIf="loading" class="loading">
-    Looking for data...
-<img src="assets/loading.png">
+      <img src="assets/loading.png">
   </div>
   <div class="header">
     <div class="col-md-4 col-sm-4">
@@ -43,7 +42,9 @@
   </div>
   <div class="col-md-12 text-center">
     <button class="button" [disabled]="!downloadBtn" (click)="download()">Start Download</button>
-    <input type="text" placeholder="Search" class="search">
+    <div class="search">
+      <input type="text" placeholder="Search">
+    </div>
   </div>
   <div class="col-md-12 text-center" [hidden]="downloadBtn">
     <span class="DownloadingText">Downloading...</span>
@@ -56,7 +57,7 @@
         <ul class="inner-list-section">
           <li *ngFor="let lib of libraries let i = index">
            <ul>
-              <li class="heading" (click)="getBooksOfLib(lib)">{{i + 1}}. {{lib.title}} </li>
+              <li class="heading" (click)="getBooksOfLib(lib, i)" [ngClass]="{active: isActiveLib(i)}">{{i + 1}}. {{lib.title}} </li>
               <li> <span>Link :</span> <a href="{{lib.link}}" target="_blank"> {{lib.link}} </a></li>
               <li *ngIf="lib.books"> <span>Books Count :</span> {{lib.books.length}}</li>
            </ul>
@@ -70,7 +71,7 @@
         <ul class="inner-list-section">
           <li *ngFor="let book of books let i = index">
             <ul>
-              <li class="heading" (click)="getChaptersOfBook(book)">{{i + 1}}. {{book.title}}</li>
+              <li class="heading" (click)="getChaptersOfBook(book, i)" [ngClass]="{active: isActiveBook(i)}">{{i + 1}}. {{book.title}}</li>
               <li> <span>Link :</span>  <a href="{{book.link}}" target="_blank"> {{book.link}} </a></li>
               <li *ngIf="book.chapters"> <span>Chapters Count :</span> {{book.chapters.length}}</li>
             </ul>
@@ -81,13 +82,12 @@
       <div class="list-section"  *ngIf="chapDataSection">
             <h1>Chapters</h1>
             <ul class="inner-list-section" id="style-4">
-              <li *ngFor="let chap of chaps; let i = index">
-                <ul>
-                  <li># {{i + 1}}.</li>
-                    <li *ngFor="let key of chap | keys">{{chap[key]}}</li>
+              <li *ngFor="let chap of chaps; let i = index" class="margin">
+                <ul [ngClass]="chap.isDownloaded ? 'green' : 'red'">
+                  <li class="heading"># {{i + 1}}. <img *ngIf="chap.isDownloaded" src="assets/folder.png" (click)="showInFolder(chap)"> </li>
+                  <li *ngFor="let key of chap | keys">{{chap[key]}}</li>
                 </ul>
               </li>
-
             </ul>
           </div>
     </div>

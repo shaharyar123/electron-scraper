@@ -402,16 +402,20 @@ function getSingleBookForDownload(libraries, libIndex, books, bookIndex, cb) {
 
 function getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex, cb) {
   if(chapters.length > chapterIndex){
-    //if(chapters[chapterIndex].isDownloaded) {
-    //  console.log('Already downloaded : libindex ', libIndex, 'bookIndex ', bookIndex, 'chapterIndex ', chapterIndex)
-    //  return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex + 1, cb);
-    //}
-    //else{
+    if(chapters[chapterIndex].isDownloaded) {
+      console.log('Already downloaded : libindex ', libIndex, 'bookIndex ', bookIndex, 'chapterIndex ', chapterIndex)
+      return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex + 1, cb);
+    }
+    else{
       if(chapters[chapterIndex].link) {
         console.log('-----Downloading chapter info ------- ',chapters[chapterIndex])
         progress(request(chapters[chapterIndex].link, function (error){
-          console.log('error in getting response of link',error, 'libindex ', libIndex, 'bookIndex ', bookIndex, 'chapterIndex ', chapterIndex)
-            return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex + 1, cb)
+        //progress(request('https://archive.org/download/M-00031/29.zip', function (error){  //3.3 mb file for testing file
+        if(error)
+            {
+              console.log('error in getting response of link', error, 'libindex ', libIndex, 'bookIndex ', bookIndex, 'chapterIndex ', chapterIndex)
+              return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex + 1, cb)
+            }
         })
         )
           .on('progress', function (state) {
@@ -420,8 +424,8 @@ function getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters,
           })
           .on('response', function (response) {
             if (response && response.statusCode === 200) {
-              let pathVal = `\\output\\${libIndex}-${bookIndex}-${chapterIndex}.zip`;
-              console.log('>>>>>',pathVal)
+              //let pathVal = `\\output\\${libIndex}-${bookIndex}-${chapterIndex}.zip`;
+              console.log('>>>>> got response');
               response.on('data', function (data) {
                   //console.log('data.length')
                 })
@@ -439,13 +443,13 @@ function getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters,
                     .then((success) => {
                       console.log('success download true-  ', success);
                       return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex + 1, cb)
+                    },(error)=>{
+                      console.log('error in saving download status-  ', error);
                     })
                     .catch((err) => {
-                      console.log("error in lib saving after download", err)
+                      console.log("error in lib saving after download", err);
                       return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex + 1, cb)
                     });
-
-                  //return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex + 1, res);
                 })
                 .pipe(fs.createWriteStream('./output/' + libIndex +'-'+ bookIndex +'-'+ chapterIndex +'.zip'))
                 //.pipe(fs.createWriteStream('./resources/app/output/' + libIndex +'-'+ bookIndex +'-'+ chapterIndex +'.zip')) // for production exe file
@@ -465,7 +469,7 @@ function getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters,
         return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex + 1, cb)
       }
 
-    //}
+    }
 
 
   }
