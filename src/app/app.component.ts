@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef  } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { PipeTransform, Pipe } from '@angular/core';
 
@@ -8,8 +8,6 @@ interface Window {
 declare var window: Window;
 const {remote} = window.require('electron')
 
-//console.log('path  is : ',remote.app.getAppPath())
-//import {ServerComponent} from '../server'
 var serve = require('../server');
 //console.log('serve ',serve)
 @Component({
@@ -153,7 +151,7 @@ export class AppComponent {
     serve.findLibs((success, error) => {
       if(success){
         this.libraries = success;
-        console.log('cb : got the data of lib', success);
+        console.log('cb : got the data of lib');
        if(cb) cb('Success', null);
       }
       else console.log('cb >>',error)
@@ -182,25 +180,40 @@ export class AppComponent {
   }
 
   getBooksOfLib(item, index){
-    console.log('item ', item.books.length);
+    this.loading = true;
+    //console.log('item ', item.books.length);
     this.selectedLib = index;
     this.chapDataSection = false;
     this.books = item.books;
     this.bookDataSection = true;
+    this.loading = false;
     this.cdRef.detectChanges();
   }
 
   getChaptersOfBook(item, index){
-    console.log('item ', item.chapters.length);
+    this.loading = true;
+    //console.log('item ', item.chapters.length);
     this.selectedBook = index;
     this.chaps = item.chapters;
     this.chapDataSection = true;
+    this.loading = false;
     this.cdRef.detectChanges();
   }
 
   showInFolder(chapter){
     console.log('chapter ',chapter);
-    this._electronService.shell.showItemInFolder(remote.app.getAppPath()+ chapter.filePath)
+    //this._electronService.shell.showItemInFolder(remote.app.getAppPath()+ chapter.filePath)
+  }
+
+  searchFromChap(search){
+    console.log('search ',search)
+    let finds = []
+    let sorted = this.chaps.find((chap)=>{
+        for(let key in chap){
+          chap[key] == search && console.log('found chap', chap)
+        }
+
+    })
   }
 
 }
