@@ -32,6 +32,7 @@ export class AppComponent {
   libraries: Array<any>;
   books: Array<any>;
   chaps: Array<any>;
+  chapsBackup: Array<any>;
   libCount : number = 0;
   booksCount : number = 0;
   chapsCount : number = 0;
@@ -195,6 +196,7 @@ export class AppComponent {
     //console.log('item ', item.chapters.length);
     this.selectedBook = index;
     this.chaps = item.chapters;
+    this.chapsBackup = item.chapters;
     this.chapDataSection = true;
     this.loading = false;
     this.cdRef.detectChanges();
@@ -202,18 +204,27 @@ export class AppComponent {
 
   showInFolder(chapter){
     console.log('chapter ',chapter);
-    //this._electronService.shell.showItemInFolder(remote.app.getAppPath()+ chapter.filePath)
+    this._electronService.shell.showItemInFolder(remote.app.getAppPath()+ chapter.filePath)
   }
 
   searchFromChap(search){
-    console.log('search ',search)
-    let finds = []
-    let sorted = this.chaps.find((chap)=>{
-        for(let key in chap){
-          chap[key] == search && console.log('found chap', chap)
+    console.log('search ',search);
+    if(search && this.chaps && this.chaps.length){
+    let filter =  this.chaps.filter((chapter) => {
+      let temp = false;
+        for(let key in chapter){
+             //console.log('chap', chapter)
+       if(chapter[key] == search) temp = true;
         }
-
-    })
+      if (temp) return chapter;
+    });
+    console.log('filters ',filter.length);
+      this.chaps = filter;
+  }
+    else {
+      this.chaps = this.chapsBackup;
+      console.log('in else')
+    }
   }
 
 }

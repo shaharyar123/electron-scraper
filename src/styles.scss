@@ -39,6 +39,19 @@ body{
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  .image-container{
+    width: 97px;
+    height: 97px;
+    overflow: hidden;
+    img{
+      margin: -20px;
+    }
+    p{
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  }
 }
 .overflow{
   overflow: hidden;

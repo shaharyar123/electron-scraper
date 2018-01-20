@@ -13,7 +13,10 @@
 <!--</div>-->
 <div class="container-fluid" [ngClass]="loading ? 'overflow' : ''">
   <div *ngIf="loading" class="loading">
+    <div class="image-container">
       <img src="assets/loading.png">
+    </div>
+      <p>Looking For Data..</p>
   </div>
   <div class="header">
     <div class="col-md-4 col-sm-4">
@@ -42,9 +45,7 @@
   </div>
   <div class="col-md-12 text-center">
     <button class="button" [disabled]="!downloadBtn" (click)="download()">Start Download</button>
-    <div class="search">
-      <input type="text" placeholder="Search" #search (keyup.enter)="searchFromChap(search.value)">
-    </div>
+
   </div>
   <div class="col-md-12 text-center" [hidden]="downloadBtn">
     <span class="DownloadingText">Downloading...</span>
@@ -80,7 +81,12 @@
       </div>
 
       <div class="list-section"  *ngIf="chapDataSection">
-            <h1>Chapters</h1>
+           <div class="flex">
+             <h1>Chapters</h1>
+             <div class="search">
+               <input type="text" placeholder="Search" #search (keyup.enter)="searchFromChap(search.value)">
+             </div>
+           </div>
             <ul class="inner-list-section" id="style-4">
               <li *ngFor="let chap of chaps; let i = index" class="margin">
                 <ul [ngClass]="chap.isDownloaded ? 'green' : 'red'">
