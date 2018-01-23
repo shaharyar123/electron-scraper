@@ -1,6 +1,7 @@
 {
-  "name": "ang-electron",
-  "version": "0.0.0",
+  "name": "Makhtutaat",
+  "version": "0.0.1",
+  "description": "Scrapper Application",
   "license": "MIT",
   "main": "main.js",
   "scripts": {

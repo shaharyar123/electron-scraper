@@ -3,6 +3,7 @@ import cheerio from 'cheerio';
 import progress from 'request-progress';
 import RxDB from 'rxdb';
 require('babel-polyfill');
+import db from '../db.json'
 
 const {remote} = window.require('electron')
 var fs = remote.require('fs');
@@ -75,6 +76,7 @@ export function createDb(cb){
     .then(function(db) {
       console.log('creating lib-collection..', db);
       database = db;
+
       return db.collection({
         name: 'lib',
         schema: libSchema
@@ -86,7 +88,26 @@ export function createDb(cb){
       database.lib.sync({
         remote: syncURL + 'lib/'
       });
-      cb('Ready', null)
+      //cb('Ready', null);
+      database.lib.importDump(db).then((res) => {
+        console.log('result import is success')
+        cb('Ready', null);
+      },(err) => {
+        console.log('result import is error', err)
+        cb('Ready', null);
+      })
+
+
+      //  database.lib.dump()         // to dump db
+      //    .then(json => {
+      //      console.dir(json);
+      //        fs.writeFile("db.json",  JSON.stringify(json), function(err) {
+      //        if(err) {
+      //          return console.log(err);
+      //        }
+      //      });
+      //});
+
       //col.remove()
       //  col.find()
       //    .$.subscribe(function(heroes) {
@@ -409,7 +430,7 @@ function getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters,
     else{
       if(chapters[chapterIndex].link) {
         console.log('-----Downloading chapter info ------- ',chapters[chapterIndex])
-        progress(request(chapters[chapterIndex].link, function (error){
+        progress(request(chapters[chapterIndex].link, function (error){             //production
         //progress(request('https://archive.org/download/M-00031/29.zip', function (error){  //3.3 mb file for testing file
         if(error)
             {
@@ -451,8 +472,8 @@ function getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters,
                       return getChaptersForDownload(libraries, libIndex, books, bookIndex, chapters, chapterIndex + 1, cb)
                     });
                 })
-                .pipe(fs.createWriteStream('./output/' + libIndex +'-'+ bookIndex +'-'+ chapterIndex +'.zip'))
-                //.pipe(fs.createWriteStream('./resources/app/output/' + libIndex +'-'+ bookIndex +'-'+ chapterIndex +'.zip')) // for production exe file
+                //.pipe(fs.createWriteStream('./output/' + libIndex +'-'+ bookIndex +'-'+ chapterIndex +'.zip'))
+                .pipe(fs.createWriteStream('./resources/app/output/' + libIndex +'-'+ bookIndex +'-'+ chapterIndex +'.zip')) // for production exe file
             }
             else {
               console.log('file not found on url link  ', response.statusCode, 'libindex ', libIndex, 'bookIndex ', bookIndex, 'chapterIndex ', chapterIndex)

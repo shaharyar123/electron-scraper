@@ -21,7 +21,7 @@ export class AppComponent {
   libDataSection: boolean = true;
   bookDataSection: boolean = false;
   chapDataSection: boolean = false;
-  libScrapBtn : boolean = true;
+  libScrapBtn : boolean = false;
   libScrapTxt : boolean = false;
   bookScrapBtn : boolean = false;
   bookScrapTxt : boolean = false;
@@ -39,12 +39,16 @@ export class AppComponent {
   constructor(private _electronService: ElectronService, private cdRef: ChangeDetectorRef) {
     serve.createDb((res, err) => {
       if(res){
+        let flag = false;
         console.log('db ready now')
         res && console.log(res);
         //this.libraries = res;
         //this.count();
         this.getData((success, err) => {
-          success && this.count()
+         if(success && !flag) {
+           this.count()
+           flag = true;
+         }
         });
 
       }
