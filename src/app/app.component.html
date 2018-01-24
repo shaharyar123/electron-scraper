@@ -28,7 +28,7 @@
     </div>
     <div class="col-md-4 col-sm-4">
       <div class="button-section">
-        <h1>Books : <span [textContent]="booksCount"></span></h1>
+        <h1>Folders : <span [textContent]="booksCount"></span></h1>
         <button class="button" (click)="scrappingBook()" [disabled]="!bookScrapBtn" *ngIf="!bookScrapTxt">Start Scrapping</button>
         <span class="DownloadingText" *ngIf="bookScrapTxt">Scrapping...</span>
 
@@ -36,7 +36,7 @@
     </div>
     <div class="col-md-4 col-sm-4">
       <div class="button-section">
-        <h1>Chapters : <span [textContent]="chapsCount"></span></h1>
+        <h1>Books : <span [textContent]="chapsCount"></span></h1>
         <button class="button" (click)="scrappingChaps()" [disabled]="!chapScrapBtn" *ngIf="!chapScrapTxt">Start Scrapping</button>
         <span class="DownloadingText" *ngIf="chapScrapTxt">Scrapping...</span>
 
@@ -68,7 +68,7 @@
       </div>
 
       <div class="list-section"  *ngIf="bookDataSection">
-        <h1>Books</h1>
+        <h1>Folders</h1>
         <ul class="inner-list-section">
           <li *ngFor="let book of books let i = index">
             <ul>
@@ -82,7 +82,7 @@
 
       <div class="list-section"  *ngIf="chapDataSection">
            <div class="flex">
-             <h1>Chapters</h1>
+             <h1>Books</h1>
              <div class="search">
                <input type="text" placeholder="Search" #search (keyup.enter)="searchFromChap(search.value)">
              </div>
