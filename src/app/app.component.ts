@@ -2,11 +2,11 @@ import { Component, ChangeDetectorRef  } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { PipeTransform, Pipe } from '@angular/core';
 
-interface Window {
-  require: any;
-}
-declare var window: Window;
-const {remote} = window.require('electron')
+//interface Window {
+//  require: any;
+//}
+//declare var window: Window;
+//const {remote} = window.require('electron')
 
 var serve = require('../server');
 //console.log('serve ',serve)
@@ -208,7 +208,7 @@ export class AppComponent {
 
   showInFolder(chapter){
     console.log('chapter ',chapter);
-    this._electronService.shell.showItemInFolder(remote.app.getAppPath()+ chapter.filePath)
+    //this._electronService.shell.showItemInFolder(remote.app.getAppPath()+ chapter.filePath)
   }
 
   searchFromChap(search){
@@ -217,8 +217,8 @@ export class AppComponent {
     let filter =  this.chaps.filter((chapter) => {
       let temp = false;
         for(let key in chapter){
-             //console.log('chap', chapter)
-       if(chapter[key] == search) temp = true;
+             //console.log('chap', typeof chapter[key])
+       if(typeof chapter[key] == 'string' && chapter[key].includes(search)) temp = true;
         }
       if (temp) return chapter;
     });
@@ -243,3 +243,4 @@ export class KeysPipe implements PipeTransform {
     return keys;
   }
 }
+
