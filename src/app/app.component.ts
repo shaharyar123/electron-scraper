@@ -31,8 +31,10 @@ export class AppComponent {
   chapScrapTxt : boolean = false;
   selectedLib :any;
   selectedBook :any;
+  filterLibData: Array<any>;
   libraries: Array<any>;
   books: Array<any>;
+  singleLib: any;
   chaps: Array<any>;
   chapsBackup: Array<any>;
   libCount : number = 0;
@@ -136,7 +138,7 @@ export class AppComponent {
     this.bookScrapTxt = true;
     serve.bookIndexing((success, error) => {
       if(success){
-        console.log('cb >>',success)
+        console.log('cb >>',success);
         this.getData((success, err) => {
           success && this.count()
         });
@@ -145,7 +147,7 @@ export class AppComponent {
         this.cdRef.detectChanges();
       }
       else {
-        console.log('>>',error)
+        console.log('>>',error);
         this.bookScrapTxt = false;
       }
 
@@ -153,11 +155,11 @@ export class AppComponent {
   }
 
   download(){
-    console.log('Start download')
+    console.log('Start download');
     this.downloadBtn = false;
     serve.findAllChaptersForDownload((success, error) => {
       if(success){
-        this.downloadBtn = true
+        this.downloadBtn = true;
         console.log('cb downloaded >>',success)
       }
       else {
@@ -171,6 +173,13 @@ export class AppComponent {
     serve.findLibs((success, error) => {
       if(success){
         this.libraries = success;
+        this.filterLibData = success.map((element) => {
+          return {
+            title : element.title,
+            link : element.link,
+            booksLength: element.books && element.books.length
+          }
+        });
         console.log('cb : got the data of lib');
        if(cb) cb('Success', null);
       }
@@ -201,10 +210,15 @@ export class AppComponent {
 
   getBooksOfLib(item, index){
     this.loading = true;
-    //console.log('item ', item.books.length);
+    //console.log('item ', item);
     this.selectedLib = index;
     this.chapDataSection = false;
-    this.books = item.books;
+    //this.books = item.books;
+    this.singleLib = this.libraries.find((lib) =>{
+      if(lib.title == item.title){
+        return lib;
+      }
+    });
     this.bookDataSection = true;
     this.loading = false;
     this.cdRef.detectChanges();
@@ -229,7 +243,7 @@ export class AppComponent {
   searchFromChap(search){
     console.log('search ',search);
     if(search && this.chaps && this.chaps.length){
-    let filter =  this.chaps.filter((chapter) => {
+    let filter =  this.chapsBackup.filter((chapter) => {
       let temp = false;
         for(let key in chapter){
        if(typeof chapter[key] == 'string' && chapter[key].includes(search)) temp = true;
@@ -238,9 +252,11 @@ export class AppComponent {
     });
     console.log('filters ',filter.length);
       this.chaps = filter;
+      this.cdRef.detectChanges();
   }
     else {
       this.chaps = this.chapsBackup;
+      this.cdRef.detectChanges();
       console.log('in else for getting all data')
     }
   }

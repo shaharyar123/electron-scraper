@@ -58,25 +58,20 @@
       <div class="list-section"  *ngIf="libDataSection">
         <h1>Libraries</h1>
         <ul class="inner-list-section">
-          <span *ngIf="startOf > 0" (click)="previous()"><< Previous </span>
-
-          <li *ngFor="let lib of libraries | slice: startOf : endOf; let i = index">
+          <li *ngFor="let lib of filterLibData; let i = index">
            <ul>
-              <li class="heading" (click)="getBooksOfLib(lib, i)" [ngClass]="{active: isActiveLib(i)}">{{serial[i] + 1}}. {{lib.title}} </li>
+              <li class="heading" (click)="getBooksOfLib(lib, i)" [ngClass]="{active: isActiveLib(i)}">{{i + 1}}. {{lib.title}} </li>
               <li> <span>Link :</span> <a href="{{lib.link}}" target="_blank"> {{lib.link}} </a></li>
-              <li *ngIf="lib.books"> <span>Books Count :</span> {{lib.books.length}}</li>
+              <li *ngIf="lib.booksLength"> <span>Books Count :</span> {{lib.booksLength}}</li>
            </ul>
           </li>
-
-          <span *ngIf="endOf < 43" (click)="loadMore()">Next >></span>
-
       </ul>
       </div>
 
       <div class="list-section"  *ngIf="bookDataSection">
         <h1>Folders</h1>
         <ul class="inner-list-section">
-          <li *ngFor="let book of books; let i = index">
+          <li *ngFor="let book of singleLib.books; let i = index">
             <ul>
               <li class="heading" (click)="getChaptersOfBook(book, i)" [ngClass]="{active: isActiveBook(i)}">{{i + 1}}. {{book.title}}</li>
               <li> <span>Link :</span>  <a href="{{book.link}}" target="_blank"> {{book.link}} </a></li>
@@ -90,7 +85,7 @@
            <div class="flex">
              <h1>Books</h1>
              <div class="search">
-               <input type="text" placeholder="Search" #search (keyup.enter)="searchFromChap(search.value)">
+               <input type="text" placeholder="Search" #search (keyup)="searchFromChap(search.value)">
              </div>
            </div>
             <ul class="inner-list-section" id="style-4">
