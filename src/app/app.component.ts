@@ -2,11 +2,11 @@ import { Component, ChangeDetectorRef  } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { PipeTransform, Pipe } from '@angular/core';
 
-//interface Window {
-//  require: any;
-//}
-//declare var window: Window;
-//const {remote} = window.require('electron')
+interface Window {
+  require: any;
+}
+declare var window: Window;
+const {remote} = window.require('electron')
 
 var serve = require('../server');
 //console.log('serve ',serve)
@@ -16,6 +16,8 @@ var serve = require('../server');
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  startOf: number = 0;
+  endOf: number = 3;
   loading: boolean = true;
   downloadBtn: boolean = true;
   libDataSection: boolean = true;
@@ -36,7 +38,14 @@ export class AppComponent {
   libCount : number = 0;
   booksCount : number = 0;
   chapsCount : number = 0;
+  serial : Array<number> = [];
+
+
   constructor(private _electronService: ElectronService, private cdRef: ChangeDetectorRef) {
+    for(let i = this.startOf; i < this.endOf; i++){
+      this.serial.push(i);
+    }
+
     serve.createDb((res, err) => {
       if(res){
         let flag = false;
@@ -56,19 +65,25 @@ export class AppComponent {
     })
   }   // DI
 
-  launchWindow() {
-    console.log('//this._electronService.shell ',this._electronService.shell);
-    let path = "\\output\\0-0-2.zip";
-    console.log(path)
-    //this._electronService.shell.openItem(remote.app.getAppPath()+ path);
+
+  loadMore(){
+    this.serial = [];
+    this.startOf = this.startOf + 3;
+    this.endOf = this.endOf + 3;
+    for(let i = this.startOf; i < this.endOf; i++){
+      this.serial.push(i);
+    }
   }
 
-  launchWindow2() {
-    console.log('//this._electronService.shell ',this._electronService.shell);
-    let path = "\\output\\0-0-2.zip";
-    console.log(path)
-    //this._electronService.shell.showItemInFolder(remote.app.getAppPath()+ path);
+  previous(){
+    this.serial = [];
+    this.startOf = this.startOf - 3;
+    this.endOf = this.endOf - 3;
+    for(let i = this.startOf; i < this.endOf; i++){
+      this.serial.push(i);
+    }
   }
+
 
   isActiveLib(index) {
     return this.selectedLib === index;
@@ -217,7 +232,6 @@ export class AppComponent {
     let filter =  this.chaps.filter((chapter) => {
       let temp = false;
         for(let key in chapter){
-             //console.log('chap', typeof chapter[key])
        if(typeof chapter[key] == 'string' && chapter[key].includes(search)) temp = true;
         }
       if (temp) return chapter;
@@ -227,7 +241,7 @@ export class AppComponent {
   }
     else {
       this.chaps = this.chapsBackup;
-      console.log('in else')
+      console.log('in else for getting all data')
     }
   }
 
