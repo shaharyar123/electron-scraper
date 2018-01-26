@@ -203,9 +203,9 @@ export class AppComponent {
     this.chapsCount = chaps;
     this.loading = false;
     this.cdRef.detectChanges();
-    console.log('libs >>',this.libCount)
-    console.log('books >>',books)
-    console.log('chaps >>',chaps)
+    console.log('libs >>',this.libCount);
+    console.log('books >>',books);
+    console.log('chaps >>',chaps);
   }
 
   getBooksOfLib(item, index){
@@ -230,7 +230,7 @@ export class AppComponent {
     this.selectedBook = index;
     this.chaps = item.chapters;
     this.chapsBackup = item.chapters;
-    this.chapDataSection = true;
+    (this.chapsBackup.length) && (this.chapDataSection = true);
     this.loading = false;
     this.cdRef.detectChanges();
   }
@@ -242,7 +242,7 @@ export class AppComponent {
 
   searchFromChap(search){
     console.log('search ',search);
-    if(search && this.chaps && this.chaps.length){
+    if(search.length){
     let filter =  this.chapsBackup.filter((chapter) => {
       let temp = false;
         for(let key in chapter){
