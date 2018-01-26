@@ -237,7 +237,7 @@ export class AppComponent {
 
   showInFolder(chapter){
     console.log('chapter ',chapter);
-    //this._electronService.shell.showItemInFolder(remote.app.getAppPath()+ chapter.filePath)
+    this._electronService.shell.showItemInFolder(remote.app.getAppPath()+ chapter.filePath)
   }
 
   searchFromChap(search){
