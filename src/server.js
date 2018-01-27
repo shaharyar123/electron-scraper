@@ -68,7 +68,7 @@ var database = '';
 export function createDb(cb){
   RxDB
     .create({
-      name: 'scraper',
+      name: 'scrapapplication',
       adapter: 'websql',
       //password: 'myLongAndStupidPassword',   //optional
       ignoreDuplicate: true

@@ -62,7 +62,7 @@
            <ul>
               <li class="heading" (click)="getBooksOfLib(lib, i)" [ngClass]="{active: isActiveLib(i)}">{{i + 1}}. {{lib.title}} </li>
               <li> <span>Link :</span> <a href="{{lib.link}}" target="_blank"> {{lib.link}} </a></li>
-              <li *ngIf="lib.booksLength"> <span>Books Count :</span> {{lib.booksLength}}</li>
+              <li *ngIf="lib.booksLength"> <span>Folders Count :</span> {{lib.booksLength}}</li>
            </ul>
           </li>
       </ul>
@@ -75,7 +75,7 @@
             <ul>
               <li class="heading" (click)="getChaptersOfBook(book, i)" [ngClass]="{active: isActiveBook(i)}">{{i + 1}}. {{book.title}}</li>
               <li> <span>Link :</span>  <a href="{{book.link}}" target="_blank"> {{book.link}} </a></li>
-              <li *ngIf="book.chapters"> <span>Chapters Count :</span> {{book.chapters.length}}</li>
+              <li *ngIf="book.chapters"> <span>Books Count :</span> {{book.chapters.length}}</li>
             </ul>
           </li>
         </ul>
