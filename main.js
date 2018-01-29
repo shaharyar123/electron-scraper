@@ -100,6 +100,10 @@ app.on('window-all-closed', () => {
   }
 })
 
+app.on('uncaughtException', function (err) {
+  console.log("***Error****", err);
+});
+
 app.on('activate', () => {
   if (win === null) {
     createWindow()

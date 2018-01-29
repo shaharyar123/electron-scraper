@@ -56,7 +56,7 @@
   <div class="col-md-12 ">
     <div class="list-container">
       <div class="list-section"  *ngIf="libDataSection">
-        <h1>Libraries</h1>
+        <h1>Libraries</h1>     <span (click)="getData()">Refresh</span>
         <ul class="inner-list-section">
           <li *ngFor="let lib of filterLibData; let i = index">
            <ul>

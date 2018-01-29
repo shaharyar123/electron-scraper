@@ -170,6 +170,8 @@ export class AppComponent {
   }
 
   getData(cb){
+    this.bookDataSection = false;
+    this.chapDataSection = false;
     serve.findLibs((success, error) => {
       if(success){
         this.libraries = success;
