@@ -156,6 +156,9 @@ export class AppComponent {
 
   download(){
     console.log('Start download');
+
+    //serve.updateProgress();
+
     this.downloadBtn = false;
     serve.findAllChaptersForDownload((success, error) => {
       if(success){
