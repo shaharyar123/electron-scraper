@@ -51,12 +51,31 @@
     <span class="DownloadingText">Downloading...</span>
   </div>
 
+  <div class="col-md-12 text-center" [hidden]="!showProgressSection">
+    <div class="progress">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%; animation: progress-bar-stripes 1s linear infinite;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+        Progress : {{progress}}
+      </div>
+    </div>
+    <!--<span class="ProgressText">Progress : {{progress}}</span>-->
+    <div class="list-section">
+      <ul class="progres-list-section">
+        <li *ngFor="let key of progressInfo | keys">
+          {{progressInfo[key]}}
+        </li>
+
+
+      </ul>
+    </div>
+
+  </div>
+
 
 
   <div class="col-md-12 ">
     <div class="list-container">
       <div class="list-section"  *ngIf="libDataSection">
-        <h1>Libraries</h1>     <span (click)="getData()">Refresh</span>
+        <h1>Libraries</h1>
         <ul class="inner-list-section">
           <li *ngFor="let lib of filterLibData; let i = index">
            <ul>

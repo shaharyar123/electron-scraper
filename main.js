@@ -74,7 +74,7 @@ function handleSquirrelEvent(application) {
 };
 
 function createWindow () {
-  win = new BrowserWindow({width: 1200, height: 600,  title: "Makhtutaat"})
+  win = new BrowserWindow({width: 1200, height: 800,  title: "Makhtutaat"})
 
   // load the dist folder from Angular
   win.loadURL(url.format({

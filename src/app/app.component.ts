@@ -16,37 +16,35 @@ var serve = require('../server');
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  startOf: number = 0;
-  endOf: number = 3;
   loading: boolean = true;
   downloadBtn: boolean = true;
   libDataSection: boolean = true;
   bookDataSection: boolean = false;
   chapDataSection: boolean = false;
   libScrapBtn : boolean = false;
-  libScrapTxt : boolean = false;
-  bookScrapBtn : boolean = false;
-  bookScrapTxt : boolean = false;
-  chapScrapBtn : boolean = false;
-  chapScrapTxt : boolean = false;
-  selectedLib :any;
-  selectedBook :any;
+  libScrapTxt: boolean = false;
+  bookScrapBtn: boolean = false;
+  bookScrapTxt: boolean = false;
+  chapScrapBtn: boolean = false;
+  chapScrapTxt: boolean = false;
+  selectedLib: any;
+  selectedBook: any;
   filterLibData: Array<any>;
   libraries: Array<any>;
   books: Array<any>;
   singleLib: any;
   chaps: Array<any>;
   chapsBackup: Array<any>;
-  libCount : number = 0;
-  booksCount : number = 0;
-  chapsCount : number = 0;
-  serial : Array<number> = [];
+  libCount: number = 0;
+  booksCount: number = 0;
+  chapsCount: number = 0;
+  serial: Array<number> = [];
+  showProgressSection: boolean = false;
+  progress: string;
+  progressInfo: any;
 
 
   constructor(private _electronService: ElectronService, private cdRef: ChangeDetectorRef) {
-    for(let i = this.startOf; i < this.endOf; i++){
-      this.serial.push(i);
-    }
 
     serve.createDb((res, err) => {
       if(res){
@@ -66,26 +64,6 @@ export class AppComponent {
       else console.log(err)
     })
   }   // DI
-
-
-  loadMore(){
-    this.serial = [];
-    this.startOf = this.startOf + 3;
-    this.endOf = this.endOf + 3;
-    for(let i = this.startOf; i < this.endOf; i++){
-      this.serial.push(i);
-    }
-  }
-
-  previous(){
-    this.serial = [];
-    this.startOf = this.startOf - 3;
-    this.endOf = this.endOf - 3;
-    for(let i = this.startOf; i < this.endOf; i++){
-      this.serial.push(i);
-    }
-  }
-
 
   isActiveLib(index) {
     return this.selectedLib === index;
@@ -157,17 +135,32 @@ export class AppComponent {
   download(){
     console.log('Start download');
 
-    //serve.updateProgress();
-
     this.downloadBtn = false;
+    this.getProgress();
     serve.findAllChaptersForDownload((success, error) => {
       if(success){
         this.downloadBtn = true;
         console.log('cb downloaded >>',success)
+        this.showProgressSection = false;
       }
       else {
         console.log(' downloaded >>',error)
         this.downloadBtn = true
+      }
+    })
+  }
+
+  getProgress(){
+    serve.getProgress((res, err) => {
+      if(res){
+        //console.log('res------------', res.progress)
+        this.showProgressSection = true;
+        this.progress = res.progress;
+        this.progressInfo = res.info;
+        this.cdRef.detectChanges();
+      }
+      else {
+        console.log('err', err)
       }
     })
   }
